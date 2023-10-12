@@ -6,7 +6,7 @@
 }
 body {
 	overflow-x: hidden;
-	background: url(/images/back.jpg);
+	background: url('../images/back.jpg');
 }
 .main-width {
 	width: 1400px;
