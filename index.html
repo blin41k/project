@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Демонстратор алгоритмов сортировки массивов</title>
+    <link rel="icon" href="pictures/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/media.css">
+</head>
+<body>
+    <div class="container">
+        <!-- шапка -->
+        <header class="block hero">
+            <h1>Демонстратор алгоритмов сортировки массивов</h1>
+            <p class="hero-text">
+                Учебный проект по предмету «Алгоритмизация и программирование». Сортировки написаны на Python, а страница сделана на HTML, CSS и JavaScript.
+            </p>
+
+            <div class="hero-tags">
+                <span>Python</span>
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>8 алгоритмов</span>
+            </div>
+        </header>
+
+        <!-- выбор алгоритма -->
+        <section class="block algorithm-nav">
+            <h2>Алгоритмы в проекте</h2>
+            <p>
+                Нажмите на карточку сортировки: она выберется в блоке управления, а страница перейдет к демонстрации.
+            </p>
+
+            <div class="algorithm-list">
+                <button class="algorithm-card active" type="button" data-algorithm="bubble" onclick="vybratAlgoritm('bubble', true)">
+                    <span class="algorithm-card__name">Сортировка пузырьком</span>
+                    <span class="algorithm-card__text">сравнение соседей</span>
+                    <span class="algorithm-card__complexity">O(n^2)</span>
+                </button>
+                <button class="algorithm-card" type="button" data-algorithm="gnome" onclick="vybratAlgoritm('gnome', true)">
+                    <span class="algorithm-card__name">Гномья сортировка</span>
+                    <span class="algorithm-card__text">шаг вперед и назад</span>
+                    <span class="algorithm-card__complexity">O(n^2)</span>
+                </button>
+                <button class="algorithm-card" type="button" data-algorithm="insertion" onclick="vybratAlgoritm('insertion', true)">
+                    <span class="algorithm-card__name">Сортировка вставками</span>
+                    <span class="algorithm-card__text">вставка на место</span>
+                    <span class="algorithm-card__complexity">O(n^2)</span>
+                </button>
+                <button class="algorithm-card" type="button" data-algorithm="comb" onclick="vybratAlgoritm('comb', true)">
+                    <span class="algorithm-card__name">Сортировка расческой</span>
+                    <span class="algorithm-card__text">сравнение на расстоянии</span>
+                    <span class="algorithm-card__complexity">O(n^2)</span>
+                </button>
+                <button class="algorithm-card" type="button" data-algorithm="shell" onclick="vybratAlgoritm('shell', true)">
+                    <span class="algorithm-card__name">Сортировка Шелла</span>
+                    <span class="algorithm-card__text">вставки с шагом</span>
+                    <span class="algorithm-card__complexity">зависит от шага</span>
+                </button>
+                <button class="algorithm-card" type="button" data-algorithm="radix" onclick="vybratAlgoritm('radix', true)">
+                    <span class="algorithm-card__name">Поразрядная сортировка</span>
+                    <span class="algorithm-card__text">обработка разрядов</span>
+                    <span class="algorithm-card__complexity">O(d * n)</span>
+                </button>
+                <button class="algorithm-card" type="button" data-algorithm="merge" onclick="vybratAlgoritm('merge', true)">
+                    <span class="algorithm-card__name">Сортировка слиянием</span>
+                    <span class="algorithm-card__text">деление и слияние</span>
+                    <span class="algorithm-card__complexity">O(n log n)</span>
+                </button>
+                <button class="algorithm-card" type="button" data-algorithm="quick" onclick="vybratAlgoritm('quick', true)">
+                    <span class="algorithm-card__name">Быстрая сортировка</span>
+                    <span class="algorithm-card__text">разделяй и властвуй</span>
+                    <span class="algorithm-card__complexity">O(n log n)</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- управление и график -->
+        <div class="work-panel" id="panel-sortirovki">
+            <section class="block">
+                <h2>Управление</h2>
+
+                <div class="form-row">
+                    <label for="size">Размер массива:</label>
+                    <input type="number" id="size" min="5" max="100" value="20">
+
+                    <div class="size-presets">
+                        <button class="size-preset" type="button" onclick="vybratRazmer(10)">10</button>
+                        <button class="size-preset" type="button" onclick="vybratRazmer(20)">20</button>
+                        <button class="size-preset" type="button" onclick="vybratRazmer(50)">50</button>
+                        <button class="size-preset" type="button" onclick="vybratRazmer(100)">100</button>
+                    </div>
+                    <p class="small-text">Размер можно выбрать кнопкой или ввести самому: от 5 до 100 элементов.</p>
+                </div>
+
+                <div class="form-row">
+                    <label for="algorithm">Алгоритм:</label>
+                    <div class="select-box">
+                        <select id="algorithm" onchange="vybratAlgoritm(this.value, false)">
+                            <option value="bubble">Сортировка пузырьком</option>
+                            <option value="gnome">Гномья сортировка</option>
+                            <option value="insertion">Сортировка вставками</option>
+                            <option value="comb">Сортировка расческой</option>
+                            <option value="shell">Сортировка Шелла</option>
+                            <option value="radix">Поразрядная сортировка</option>
+                            <option value="merge">Сортировка слиянием</option>
+                            <option value="quick">Быстрая сортировка</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="speed">Скорость анимации:</label>
+                    <div class="select-box">
+                        <select id="speed">
+                            <option value="slow">Медленно</option>
+                            <option value="normal" selected>Нормально</option>
+                            <option value="fast">Быстро</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label for="manual-array">Свой массив:</label>
+                    <textarea
+                        id="manual-array"
+                        rows="4"
+                        placeholder="Например: 7, 3, 1, 9, 10, 2, 3"
+                    ></textarea>
+                    <p class="small-text">
+                        Числа можно вводить через запятую, пробел или точку с запятой.
+                    </p>
+                </div>
+
+                <div class="buttons">
+                    <button id="generate-button" type="button" onclick="generirovatMassiv()">Сгенерировать</button>
+                    <button id="apply-manual-button" type="button" onclick="ispolzovatSvoiMassiv()">Применить свой</button>
+                    <button id="sort-button" type="button" onclick="sortirovatMassiv()">Сортировать</button>
+                    <button id="compare-button" type="button" onclick="sravnitAlgoritmy()">Сравнить все</button>
+                    <button id="stop-button" type="button" onclick="stopAction()">Остановить</button>
+                </div>
+            </section>
+
+            <section class="block visual-block">
+                <h2>Визуализация массива</h2>
+                <div class="array-stage" id="array-stage">
+                    <p class="placeholder">Сначала сгенерируйте массив или введите его вручную.</p>
+                </div>
+                <div class="color-legend">
+                    <span><b class="legend-color legend-normal"></b>обычный элемент</span>
+                    <span><b class="legend-color legend-compare"></b>сравнение</span>
+                    <span><b class="legend-color legend-swap"></b>обмен или запись</span>
+                    <span><b class="legend-color legend-sorted"></b>отсортировано</span>
+                </div>
+                <p class="status-message" id="status-message">
+                    Нажмите «Сгенерировать» или задайте свой массив.
+                </p>
+            </section>
+        </div>
+
+        <!-- массивы и статистика -->
+        <div class="columns">
+            <section class="block">
+                <h2>Массивы</h2>
+                <p><strong>Исходный массив:</strong></p>
+                <p class="array-text" id="source-array">Пока не сгенерирован.</p>
+
+                <p><strong>Отсортированный массив:</strong></p>
+                <p class="array-text" id="sorted-array">Пока не отсортирован.</p>
+            </section>
+
+            <section class="block stats-block">
+                <h2>Статистика</h2>
+                <p>Время работы: <strong id="time-stat">0 мс</strong></p>
+                <p>Сравнения: <strong id="comparisons-stat">0</strong></p>
+                <p>Перестановки / сдвиги: <strong id="swaps-stat">0</strong></p>
+                <p>Шаги анимации: <strong id="steps-stat">0</strong></p>
+
+                <div class="stat-help">
+                    <h3>Как читать статистику</h3>
+                    <p><strong>Время</strong> после кнопки «Сортировать» показывает запуск вместе с анимацией в секундах. В таблице сравнения время считается без анимации в миллисекундах.</p>
+                    <p><strong>Сравнения</strong> - сколько раз алгоритм сравнивал элементы.</p>
+                    <p><strong>Перестановки / сдвиги</strong> - сколько раз менялись значения в массиве.</p>
+                    <p><strong>Шаги</strong> - сколько действий записано для анимации.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- теория -->
+        <section class="block">
+            <h2>Коротко из практики</h2>
+            <div class="theory-grid">
+                <article>
+                    <h3>Зачем сортировать</h3>
+                    <p>
+                        После сортировки одинаковые элементы оказываются рядом. Так проще искать повторы и анализировать массив.
+                    </p>
+                </article>
+                <article>
+                    <h3>Сложность</h3>
+                    <p>
+                        O(n^2) растет быстро, поэтому такие алгоритмы удобны для маленьких массивов. O(n^2) подходит для простых учебных алгоритмов, а O(n log n) обычно быстрее на больших массивах.
+                    </p>
+                </article>
+                <article>
+                    <h3>Разделяй и властвуй</h3>
+                    <p>
+                        Быстрая сортировка выбирает опорный элемент, делит массив на части и сортирует эти части отдельно.
+                    </p>
+                </article>
+                <article>
+                    <h3>Сравнение</h3>
+                    <p>
+                        Все алгоритмы сравниваются на одном исходном массиве. Так удобнее оценивать время, сравнения, перестановки и шаги.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- описание алгоритма -->
+        <section class="block guide-block">
+            <h2>Информация об алгоритме</h2>
+            <div class="guide-layout">
+                <div class="guide-main">
+                    <span class="guide-label">Выбранный алгоритм</span>
+                    <h3 id="guide-name">Сортировка пузырьком</h3>
+                    <p id="guide-description">
+                        Алгоритм последовательно сравнивает соседние элементы и меняет их местами, если они стоят неправильно.
+                    </p>
+                </div>
+
+                <div class="guide-complexity">
+                    <span>Сложность</span>
+                    <strong id="guide-complexity">O(n^2)</strong>
+                </div>
+            </div>
+
+            <div class="guide-details">
+                <p>
+                    <span>Идея</span>
+                    <strong id="guide-behavior">сравнение соседних элементов</strong>
+                </p>
+                <p>
+                    <span>Когда полезен</span>
+                    <strong id="guide-best-for">для первого знакомства с сортировками</strong>
+                </p>
+                <p>
+                    <span>Как работает</span>
+                    <strong id="guide-note">Текущий элемент сравнивается со следующим; если порядок неправильный, элементы меняются местами.</strong>
+                </p>
+                <p>
+                    <span>Случаи</span>
+                    <strong id="guide-cases">лучший: O(n^2), средний: O(n^2), худший: O(n^2)</strong>
+                </p>
+            </div>
+
+            <details class="guide-more-block">
+                <summary>Подробно об алгоритме</summary>
+                <p id="guide-more">
+                    Сортировка пузырьком - простейший и один из самых известных алгоритмов сортировки. Алгоритм повторяет проходы по массиву и постепенно ставит элементы в правильный порядок. Массив меняется прямо на месте, без создания нового массива.
+                </p>
+                <p class="guide-code-note">
+                    Основа Python-кода повторяет псевдокод из практики. Дополнительно код записывает шаги: сравнение, обмен или запись элемента, чтобы JavaScript мог показать анимацию.
+                </p>
+                <div class="pseudo-box">
+                    <span>Псевдокод</span>
+                    <pre id="guide-pseudo">для i от 0 до n - 2:
+    для j от 0 до n - 2:
+        если массив[j] > массив[j + 1]:
+            поменять местами</pre>
+                </div>
+            </details>
+        </section>
+
+        <!-- таблица сравнения -->
+        <section class="block">
+            <h2>Сравнение алгоритмов</h2>
+            <p id="comparison-message">
+                Здесь появятся результаты после нажатия кнопки «Сравнить все».
+            </p>
+            <p class="small-text compare-note">
+                Сначала таблица отсортирована по шагам: сверху алгоритм, который сделал меньше действий. Для другого порядка нажмите на нужный заголовок.
+            </p>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <button class="table-sort" type="button" data-sort="name" onclick="vybratSortTablicy('name')">
+                                    <span>Алгоритм</span>
+                                    <span class="sort-arrow"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button class="table-sort" type="button" data-sort="time" onclick="vybratSortTablicy('time')">
+                                    <span>Время</span>
+                                    <span class="sort-arrow"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button class="table-sort" type="button" data-sort="comparisons" onclick="vybratSortTablicy('comparisons')">
+                                    <span>Сравнения</span>
+                                    <span class="sort-arrow"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button class="table-sort" type="button" data-sort="swaps" onclick="vybratSortTablicy('swaps')">
+                                    <span>Перестановки</span>
+                                    <span class="sort-arrow"></span>
+                                </button>
+                            </th>
+                            <th>
+                                <button class="table-sort active" type="button" data-sort="steps" onclick="vybratSortTablicy('steps')">
+                                    <span>Шаги</span>
+                                    <span class="sort-arrow">▲</span>
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparison-body">
+                        <tr>
+                            <td colspan="5">Пока нет данных.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- данные алгоритмов -->
+        <div hidden>
+            <article class="algorithm-info" data-algorithm="bubble">
+                <h3 class="info-name">Сортировка пузырьком</h3>
+                <p class="info-description">Последовательно сравнивает соседние элементы и меняет их местами, если они стоят неправильно.</p>
+                <p class="info-complexity">O(n^2)</p>
+                <p class="info-behavior">сравнение соседних элементов</p>
+                <p class="info-best-for">для самого первого знакомства с алгоритмами сортировки</p>
+                <p class="info-note">Текущий элемент сравнивается со следующим; если порядок неправильный, элементы меняются местами.</p>
+                <p class="info-cases">лучший: O(n^2), средний: O(n^2), худший: O(n^2)</p>
+                <p class="info-more">Сортировка пузырьком - простейший и один из самых известных алгоритмов сортировки. Идея заключается в последовательном сравнении соседних элементов. Если текущий элемент больше следующего, они меняются местами. Алгоритм повторяет проходы по массиву до тех пор, пока элементы не окажутся в правильном порядке. На его примере удобно понять саму идею обменной сортировки: массив меняется прямо на месте, без создания нового массива.</p>
+                <pre class="info-pseudo">n = длина(массив)
+для i от 0 до n - 2:
+    для j от 0 до n - 2:
+        если массив[j] > массив[j + 1]:
+            поменять местами</pre>
+            </article>
+
+            <article class="algorithm-info" data-algorithm="gnome">
+                <h3 class="info-name">Гномья сортировка</h3>
+                <p class="info-description">Перемещается по массиву вперед и назад: если соседние элементы стоят неправильно, меняет их местами.</p>
+                <p class="info-complexity">O(n^2)</p>
+                <p class="info-behavior">шаг вперед и шаг назад</p>
+                <p class="info-best-for">для наглядной демонстрации обменов соседних элементов</p>
+                <p class="info-note">Если порядок правильный, алгоритм идет вперед; если нет - меняет элементы и возвращается назад.</p>
+                <p class="info-cases">лучший: O(n), средний: O(n^2), худший: O(n^2)</p>
+                <p class="info-more">Гномья сортировка основана на идее движения по массиву как по линии цветочных горшков. Алгоритм смотрит на текущий и предыдущий элементы. Если они стоят в правильном порядке, он делает шаг вперед. Если порядок нарушен, элементы меняются местами, а алгоритм делает шаг назад. Так элемент постепенно возвращается туда, где он должен находиться. Если предыдущего элемента нет, алгоритм идет вперед; если следующего элемента нет, сортировка закончена.</p>
+                <pre class="info-pseudo">i = 1
+пока i < длина(массив):
+    если i > 0 и массив[i - 1] > массив[i]:
+        поменять местами
+        i = i - 1
+    иначе:
+        i = i + 1</pre>
+            </article>
+
+            <article class="algorithm-info" data-algorithm="insertion">
+                <h3 class="info-name">Сортировка вставками</h3>
+                <p class="info-description">Постепенно строит отсортированную часть массива и вставляет новый элемент в нужное место.</p>
+                <p class="info-complexity">O(n^2)</p>
+                <p class="info-behavior">сдвиг и вставка</p>
+                <p class="info-best-for">для маленьких или почти отсортированных массивов</p>
+                <p class="info-note">Берется текущий элемент, а большие элементы слева сдвигаются вправо.</p>
+                <p class="info-cases">лучший: O(n), средний: O(n^2), худший: O(n^2)</p>
+                <p class="info-more">Сортировка вставками работает по принципу пошагового построения отсортированной части массива. Алгоритм начинает со второго элемента, сравнивает его с предыдущими и сдвигает большие элементы вправо. Когда подходящее место найдено, текущий элемент вставляется туда. После каждого прохода отсортированная часть слева становится на один элемент больше. Этот алгоритм прост и хорошо работает на маленьких или почти отсортированных массивах, но на больших данных становится медленным.</p>
+                <pre class="info-pseudo">для i от 1 до длина(массив) - 1:
+    текущий = массив[i]
+    пока слева есть элементы больше текущего:
+        сдвинуть элемент вправо
+    поставить текущий на место</pre>
+            </article>
+
+            <article class="algorithm-info" data-algorithm="comb">
+                <h3 class="info-name">Сортировка расческой</h3>
+                <p class="info-description">Улучшает сортировку пузырьком: сравнивает элементы не только рядом, но и на расстоянии.</p>
+                <p class="info-complexity">O(n^2)</p>
+                <p class="info-behavior">сравнения с уменьшающимся шагом</p>
+                <p class="info-best-for">для показа улучшения пузырьковой сортировки</p>
+                <p class="info-note">Сначала шаг большой, потом он уменьшается, пока алгоритм не доходит до соседних элементов.</p>
+                <p class="info-cases">лучший: O(n log n), средний: около O(n^2), худший: O(n^2)</p>
+                <p class="info-more">Сортировка расческой - это модификация сортировки пузырьком. Главное отличие в том, что сравниваются не только соседние элементы, а элементы на некотором расстоянии. Сначала шаг большой, затем он уменьшается примерно в 1.3 раза. За счет этого крупные элементы быстрее перемещаются ближе к своему месту, чем в обычной пузырьковой сортировке. Когда шаг становится равен 1, алгоритм фактически заканчивает работу обычными соседними сравнениями.</p>
+                <pre class="info-pseudo">шаг = длина(массив)
+пока шаг > 1 или были обмены:
+    шаг = шаг / 1.3
+    сравнивать элементы через этот шаг
+    если порядок неправильный:
+        поменять местами</pre>
+            </article>
+
+            <article class="algorithm-info" data-algorithm="shell">
+                <h3 class="info-name">Сортировка Шелла</h3>
+                <p class="info-description">Улучшает сортировку вставками за счет сравнения элементов с разными шагами.</p>
+                <p class="info-complexity">зависит от шага</p>
+                <p class="info-behavior">вставки с уменьшающимся шагом</p>
+                <p class="info-best-for">для показа ускорения сортировки вставками</p>
+                <p class="info-note">Сначала сравниваются дальние элементы, потом шаг уменьшается до одного.</p>
+                <p class="info-cases">лучший: O(n log n), средний: зависит от шага, худший: O(n^2)</p>
+                <p class="info-more">Сортировка Шелла - это улучшение сортировки вставками. Обычная сортировка вставками работает с соседними элементами, а сортировка Шелла сначала берет большой шаг между элементами. На каждом шаге элементы с таким интервалом частично упорядочиваются. Затем шаг уменьшается в два раза. Когда шаг становится равен 1, алгоритм превращается в обычную сортировку вставками, но массив уже частично подготовлен, поэтому сортировка идет быстрее.</p>
+                <pre class="info-pseudo">шаг = длина(массив) // 2
+пока шаг > 0:
+    выполнить сортировку вставками с этим шагом
+    шаг = шаг // 2</pre>
+            </article>
+
+            <article class="algorithm-info" data-algorithm="radix">
+                <h3 class="info-name">Поразрядная сортировка</h3>
+                <p class="info-description">Обрабатывает числа по разрядам: сначала единицы, потом десятки, сотни и так далее.</p>
+                <p class="info-complexity">O(d * n)</p>
+                <p class="info-behavior">сортировка по цифрам числа</p>
+                <p class="info-best-for">для массивов с целыми неотрицательными числами</p>
+                <p class="info-note">На каждом разряде числа раскладываются по корзинам от 0 до 9, затем корзины собираются обратно.</p>
+                <p class="info-cases">лучший: O(d * n), средний: O(d * n), худший: O(d * n)</p>
+                <p class="info-more">Поразрядная сортировка работает путем обработки элементов по разрядам: единицы, десятки, сотни и так далее. На каждом разряде используется дополнительная сортировка по текущей цифре, чаще всего через подсчет или корзины. Для цифр создаются 10 корзин, числа раскладываются по ним, а затем корзины объединяются обратно. После обработки одного разряда алгоритм переходит к следующему, умножая разряд на 10. После обработки всех разрядов массив становится отсортированным.</p>
+                <pre class="info-pseudo">разряд = 1
+пока есть цифры в максимальном числе:
+    разложить числа по корзинам 0-9
+    собрать корзины обратно в массив
+    разряд = разряд * 10</pre>
+            </article>
+
+            <article class="algorithm-info" data-algorithm="merge">
+                <h3 class="info-name">Сортировка слиянием</h3>
+                <p class="info-description">Делит массив на две части, сортирует их отдельно и затем сливает обратно.</p>
+                <p class="info-complexity">O(n log n)</p>
+                <p class="info-behavior">разделение и слияние</p>
+                <p class="info-best-for">для демонстрации метода «разделяй и властвуй»</p>
+                <p class="info-note">Массив делится до маленьких частей, а потом эти части собираются в правильном порядке.</p>
+                <p class="info-cases">лучший: O(n log n), средний: O(n log n), худший: O(n log n)</p>
+                <p class="info-more">Сортировка слиянием использует метод «разделяй и властвуй». Алгоритм делит массив на две половины, затем отдельно сортирует левую и правую части. Деление продолжается до тех пор, пока подмассивы не станут совсем маленькими. После этого начинается слияние: из двух отсортированных половин выбирается меньший элемент и записывается обратно в исходный массив. Такой алгоритм эффективен по времени, но ему нужны дополнительные массивы для левой и правой частей.</p>
+                <pre class="info-pseudo">если длина массива больше 1:
+    разделить массив на левую и правую части
+    отсортировать левую часть
+    отсортировать правую часть
+    слить две части обратно</pre>
+            </article>
+
+            <article class="algorithm-info" data-algorithm="quick">
+                <h3 class="info-name">Быстрая сортировка</h3>
+                <p class="info-description">Выбирает опорный элемент, делит массив на части и сортирует эти части отдельно.</p>
+                <p class="info-complexity">O(n log n)</p>
+                <p class="info-behavior">опорный элемент и разделение массива</p>
+                <p class="info-best-for">для быстрой сортировки массивов на практике</p>
+                <p class="info-note">Сначала выполняет перестановки на большом расстоянии, а потом сортирует левую и правую части.</p>
+                <p class="info-cases">лучший: O(n log n), средний: O(n log n), худший: O(n^2)</p>
+                <p class="info-more">Быстрая сортировка также использует метод «разделяй и властвуй». Алгоритм выбирает опорный элемент, затем переставляет массив так, чтобы элементы меньше опорного оказались слева, а элементы больше - справа. После разделения левая и правая части сортируются рекурсивно. В отличие от сортировки пузырьком, обмены могут происходить на большом расстоянии друг от друга. В нашем коде опорным элементом берется последний элемент, как в псевдокоде из материала.</p>
+                <pre class="info-pseudo">выбрать опорный элемент
+переставить меньшие элементы влево
+переставить большие элементы вправо
+отсортировать левую часть
+отсортировать правую часть</pre>
+            </article>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.29.3/full/pyodide.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
