@@ -52,7 +52,7 @@ def generate_array(size):
     return [random.randint(MIN_RANDOM, MAX_RANDOM) for _ in range(size)]
 
 
-# общий ответ для сайта
+# общий ответ на сайт
 def make_answer(name, start_array, finish_array, steps, comparisons, swaps, start_time):
     work_time = (time.perf_counter() - start_time) * 1000
 
@@ -68,6 +68,48 @@ def make_answer(name, start_array, finish_array, steps, comparisons, swaps, star
             "steps": len(steps),
         },
     }
+
+
+# проверка с шагами для анимации
+def check_sorted(array, steps):
+    comparisons = 0
+
+    for i in range(1, len(array)):
+        comparisons += 1
+        steps.append({"type": "compare", "indices": [i - 1, i]})
+
+        if array[i] < array[i - 1]:
+            return False, comparisons
+
+    return True, comparisons
+
+
+# безопасная досортировка
+def safe_finish_sort(array, steps):
+    comparisons = 0
+    swaps = 0
+
+    for i in range(1, len(array)):
+        current = array[i]
+        j = i - 1
+
+        while j >= 0:
+            comparisons += 1
+            steps.append({"type": "compare", "indices": [j, j + 1]})
+
+            if array[j] <= current:
+                break
+
+            array[j + 1] = array[j]
+            swaps += 1
+            steps.append({"type": "overwrite", "index": j + 1, "value": array[j]})
+            j -= 1
+
+        array[j + 1] = current
+        swaps += 1
+        steps.append({"type": "overwrite", "index": j + 1, "value": current})
+
+    return comparisons, swaps
 
 
 # сортировка пузырьком
@@ -125,7 +167,7 @@ def comb_sort(array):
     swaps = 0
     start_time = time.perf_counter()
     n = len(a)
-    gap = n
+    gap = n - 1
     changed = True
 
     while gap > 1 or changed:
@@ -354,7 +396,156 @@ def quick_sort(array):
     return make_answer("quick", array, a, steps, comparisons, swaps, start_time)
 
 
-# связь названия и функции
+# болотная сортировка
+def bogo_sort(array):
+    a = array[:]
+    steps = []
+    comparisons = 0
+    swaps = 0
+    start_time = time.perf_counter()
+    max_attempts = 100
+    attempts = 0
+    sorted_now = len(a) < 2
+
+    while attempts < max_attempts and not sorted_now:
+        for i in range(len(a)):
+            random_position = random.randrange(len(a))
+            a[i], a[random_position] = a[random_position], a[i]
+            swaps += 1
+            steps.append({"type": "swap", "indices": [i, random_position]})
+
+        attempts += 1
+        sorted_now, extra_comparisons = check_sorted(a, steps)
+        comparisons += extra_comparisons
+
+    if not sorted_now:
+        extra_comparisons, extra_swaps = safe_finish_sort(a, steps)
+        comparisons += extra_comparisons
+        swaps += extra_swaps
+
+    return make_answer("bogo", array, a, steps, comparisons, swaps, start_time)
+
+
+# сортировка клоуна бозо
+def bozo_sort(array):
+    a = array[:]
+    steps = []
+    comparisons = 0
+    swaps = 0
+    start_time = time.perf_counter()
+    max_attempts = 500
+    attempts = 0
+    sorted_now = len(a) < 2
+
+    while attempts < max_attempts and not sorted_now:
+        index1 = random.randrange(len(a))
+        index2 = random.randrange(len(a))
+        a[index1], a[index2] = a[index2], a[index1]
+        swaps += 1
+        steps.append({"type": "swap", "indices": [index1, index2]})
+
+        attempts += 1
+        sorted_now, extra_comparisons = check_sorted(a, steps)
+        comparisons += extra_comparisons
+
+    if not sorted_now:
+        extra_comparisons, extra_swaps = safe_finish_sort(a, steps)
+        comparisons += extra_comparisons
+        swaps += extra_swaps
+
+    return make_answer("bozo", array, a, steps, comparisons, swaps, start_time)
+
+
+# придурковатая сортировка
+def stooge_sort(array):
+    a = array[:]
+    steps = []
+    comparisons = 0
+    swaps = 0
+    start_time = time.perf_counter()
+
+    def sort_part(lo, hi):
+        nonlocal comparisons, swaps
+
+        if lo >= hi:
+            return
+
+        comparisons += 1
+        steps.append({"type": "compare", "indices": [lo, hi]})
+
+        if a[lo] > a[hi]:
+            a[lo], a[hi] = a[hi], a[lo]
+            swaps += 1
+            steps.append({"type": "swap", "indices": [lo, hi]})
+
+        if lo + 1 >= hi:
+            return
+
+        third = (hi - lo + 1) // 3
+
+        sort_part(lo, hi - third)
+        sort_part(lo + third, hi)
+        sort_part(lo, hi - third)
+
+    sort_part(0, len(a) - 1)
+    return make_answer("stooge", array, a, steps, comparisons, swaps, start_time)
+
+
+# сортировка перестановками
+def perm_sort(array):
+    a = array[:]
+    steps = []
+    comparisons = 0
+    swaps = 0
+    start_time = time.perf_counter()
+    max_size = 7
+    max_attempts = 1000
+    attempts = 0
+
+    def sort_part(index):
+        nonlocal comparisons, swaps, attempts
+
+        sorted_now, extra_comparisons = check_sorted(a, steps)
+        comparisons += extra_comparisons
+
+        if sorted_now:
+            return True
+
+        if len(a) > max_size or attempts >= max_attempts or index >= len(a) - 1:
+            return False
+
+        for j in range(index, len(a)):
+            if attempts >= max_attempts:
+                return False
+
+            if j != index:
+                comparisons += 1
+                steps.append({"type": "compare", "indices": [index, j]})
+                a[index], a[j] = a[j], a[index]
+                swaps += 1
+                steps.append({"type": "swap", "indices": [index, j]})
+
+            attempts += 1
+
+            if sort_part(index + 1):
+                return True
+
+            if j != index:
+                a[index], a[j] = a[j], a[index]
+                swaps += 1
+                steps.append({"type": "swap", "indices": [index, j]})
+
+        return False
+
+    if not sort_part(0):
+        extra_comparisons, extra_swaps = safe_finish_sort(a, steps)
+        comparisons += extra_comparisons
+        swaps += extra_swaps
+
+    return make_answer("perm", array, a, steps, comparisons, swaps, start_time)
+
+
+# связь названия и функции сортировки
 SORTERS = {
     "bubble": bubble_sort,
     "gnome": gnome_sort,
@@ -364,6 +555,10 @@ SORTERS = {
     "radix": radix_sort,
     "merge": merge_sort,
     "quick": quick_sort,
+    "bogo": bogo_sort,
+    "bozo": bozo_sort,
+    "stooge": stooge_sort,
+    "perm": perm_sort,
 }
 
 

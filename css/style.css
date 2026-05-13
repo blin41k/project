@@ -130,7 +130,8 @@ p {
     margin-top: 12px;
 }
 
-.algorithm-card {
+.algorithm-card,
+.joke-algorithm-card {
     min-height: 104px;
     padding: 14px;
     border: 1px solid #eacadd;
@@ -141,7 +142,23 @@ p {
     box-shadow: none;
 }
 
-.algorithm-card:hover {
+.joke-algorithm-card {
+    border-style: dashed;
+    background: #fbf4f8;
+    cursor: default;
+}
+
+.fruit-nav-card {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.wide-joke-card {
+    grid-column: span 2;
+}
+
+.algorithm-card:hover,
+.fruit-nav-card:hover {
     transform: translateY(-3px);
     border-color: var(--pink);
     background: #ffffff;
@@ -175,7 +192,8 @@ p {
 }
 
 .algorithm-card__complexity {
-    width: max-content;
+    width: fit-content;
+    max-width: 100%;
     margin-top: 10px;
     padding: 4px 8px;
     border: 1px solid #e7c6d7;
@@ -184,9 +202,10 @@ p {
     color: var(--pink-dark);
     font-size: 12px;
     font-weight: 900;
+    line-height: 1.25;
 }
 
-/* рабочая зона */
+/* панель управления и визуализации */
 .work-panel {
     display: grid;
     grid-template-columns: minmax(270px, 0.62fr) minmax(0, 1.85fr);
@@ -264,8 +283,7 @@ input[type="number"] {
     pointer-events: none;
 }
 
-#algorithm,
-#speed {
+#algorithm {
     appearance: none;
     padding-left: 14px;
     padding-right: 46px;
@@ -274,8 +292,7 @@ input[type="number"] {
     font-weight: 900;
 }
 
-#algorithm:hover,
-#speed:hover {
+#algorithm:hover {
     border-color: var(--pink);
     background: #fff5fa;
 }
@@ -285,7 +302,7 @@ textarea {
     resize: none;
 }
 
-/* кнопки размера */
+/* кнопки размеров */
 .size-presets {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -363,7 +380,7 @@ button:disabled {
     font-size: 14px;
 }
 
-/* график */
+/* визуализация массива */
 .array-stage {
     flex: 1;
     min-height: 390px;
@@ -411,7 +428,7 @@ button:disabled {
     background: var(--teal);
 }
 
-/* легенда цветов */
+/* описание цветов */
 .color-legend {
     display: flex;
     flex-wrap: wrap;
@@ -450,7 +467,7 @@ button:disabled {
     background: var(--teal);
 }
 
-/* статус */
+/* нижний месседж */
 .status-message {
     margin-top: 14px;
     padding: 12px 14px;
@@ -474,7 +491,7 @@ button:disabled {
     background: #fff6e7;
 }
 
-/* массивы и статистика */
+/* массивы и стата */
 .columns {
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
@@ -647,13 +664,6 @@ button:disabled {
     color: #3c3440;
 }
 
-.guide-code-note {
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: #fff0f7;
-    font-size: 14px;
-}
-
 /* псевдокод */
 .pseudo-box {
     margin-top: 12px;
@@ -681,6 +691,93 @@ button:disabled {
     font-size: 14px;
     line-height: 1.5;
     white-space: pre-wrap;
+}
+
+/* пример с фруктами */
+.fruits-block > p {
+    max-width: 980px;
+    color: #3c3440;
+}
+
+.fruits-block h3 {
+    margin-top: 18px;
+    color: var(--pink-dark);
+    font-size: 20px;
+}
+
+.fruit-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 16px 0 12px;
+}
+
+.fruit-card,
+.fruit-example,
+.fruit-sort-grid article {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fff9fc;
+}
+
+.fruit-card {
+    min-height: 120px;
+    padding: 14px;
+}
+
+.fruit-card__icon,
+.fruit-card strong,
+.fruit-card span {
+    display: block;
+}
+
+.fruit-card__icon {
+    margin-bottom: 8px;
+    font-size: 34px;
+    line-height: 1;
+}
+
+.fruit-card strong {
+    font-size: 16px;
+}
+
+.fruit-card span:not(.fruit-card__icon) {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.fruit-example {
+    padding: 14px 16px;
+    background: #fff0f7;
+}
+
+.fruit-example p {
+    margin-bottom: 0;
+}
+
+.fruit-sort-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.fruit-sort-grid article {
+    min-height: 160px;
+    padding: 15px;
+}
+
+.fruit-sort-grid h4 {
+    margin: 0 0 8px;
+    color: var(--pink-dark);
+    font-size: 17px;
+}
+
+.fruit-sort-grid p {
+    margin-bottom: 0;
+    color: #3c3440;
+    font-size: 14px;
 }
 
 /* таблица */

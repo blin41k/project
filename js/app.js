@@ -1,7 +1,6 @@
 // элементы страницы
 const razmerInput = document.getElementById("size");
 const algoritmSelect = document.getElementById("algorithm");
-const speedSelect = document.getElementById("speed");
 const svoiInput = document.getElementById("manual-array");
 const knopkaGenerate = document.getElementById("generate-button");
 const knopkaSvoi = document.getElementById("apply-manual-button");
@@ -29,7 +28,7 @@ const compareText = document.getElementById("comparison-message");
 const compareBody = document.getElementById("comparison-body");
 const panelSortirovki = document.getElementById("panel-sortirovki");
 
-// кнопки на странице
+// кнопки алгоритмов
 const knopkiAlgoritmov = Array.from(document.querySelectorAll(".algorithm-card"));
 const knopkiSortTable = Array.from(document.querySelectorAll(".table-sort"));
 
@@ -43,45 +42,13 @@ const infoAlgoritmov = Array.from(document.querySelectorAll(".algorithm-info"));
 // состояние страницы
 let pyodide = null;
 let pythonGotov = false;
-let isBusy = false;
-let sortIdet = false;
-let stopNado = false;
+let zanat = false;
+let sortirovkaIdet = false;
+let nadoOstanovit = false;
 let massiv = [];
 let comparisonResults = [];
 let tableSort = "steps";
 let tableDirection = "asc";
-
-// проверка размера
-function normalRazmer(value) {
-    let chislo = Number.parseInt(value, 10);
-
-    if (Number.isNaN(chislo)) {
-        chislo = 20;
-    }
-
-    if (chislo < MIN_ARRAY_SIZE) {
-        chislo = MIN_ARRAY_SIZE;
-    }
-
-    if (chislo > MAX_ARRAY_SIZE) {
-        chislo = MAX_ARRAY_SIZE;
-    }
-
-    return chislo;
-}
-
-// скорость показа
-function koefSkorosti() {
-    if (speedSelect.value === "slow") {
-        return 1.8;
-    }
-
-    if (speedSelect.value === "fast") {
-        return 0.22;
-    }
-
-    return 1;
-}
 
 // текст массива
 function massivText(array) {
@@ -92,7 +59,7 @@ function massivText(array) {
     return "[" + array.join(", ") + "]";
 }
 
-// формат времени
+// время
 function formatVremya(value) {
     const ms = Number(value);
 
@@ -100,7 +67,7 @@ function formatVremya(value) {
         return "0 мс";
     }
 
-    if (ms <= 0 || ms < 0.001) {
+    if (ms < 0.001) {
         return "< 0.001 мс";
     }
 
@@ -110,14 +77,10 @@ function formatVremya(value) {
 // сообщение снизу
 function pokazatStatus(text, type = "") {
     statusText.textContent = text;
-    statusText.className = "status-message";
-
-    if (type !== "") {
-        statusText.classList.add("status-" + type);
-    }
+    statusText.className = type === "" ? "status-message" : "status-message status-" + type;
 }
 
-// статистика сортировки
+// статистика
 function pokazatStatistiku(stats = null) {
     if (stats === null) {
         statTime.textContent = "0 мс";
@@ -170,22 +133,33 @@ function textInfo(info, selector) {
     return item.textContent.trim();
 }
 
+// html из блока
+function htmlInfo(info, selector) {
+    const item = info.querySelector(selector);
+
+    if (item === null) {
+        return "";
+    }
+
+    return item.innerHTML.trim();
+}
+
 // название алгоритма
 function nazvanieAlgoritma(name) {
     return textInfo(naitiInfo(name), ".info-name");
 }
 
-// описание выбранной сортировки
+// описание выбранного сорта
 function obnovitInfo() {
     const info = naitiInfo(algoritmSelect.value);
 
     guideName.textContent = textInfo(info, ".info-name");
     guideDescription.textContent = textInfo(info, ".info-description");
-    guideComplexity.textContent = textInfo(info, ".info-complexity");
+    guideComplexity.innerHTML = htmlInfo(info, ".info-complexity");
     guideBehavior.textContent = textInfo(info, ".info-behavior");
     guideBestFor.textContent = textInfo(info, ".info-best-for");
     guideNote.textContent = textInfo(info, ".info-note");
-    guideCases.textContent = textInfo(info, ".info-cases");
+    guideCases.innerHTML = htmlInfo(info, ".info-cases");
     guideMore.textContent = textInfo(info, ".info-more");
     guidePseudo.textContent = textInfo(info, ".info-pseudo");
 
@@ -197,7 +171,7 @@ function obnovitInfo() {
 
 // выбор размера
 function vybratRazmer(size) {
-    if (isBusy) {
+    if (zanat) {
         return;
     }
 
@@ -206,22 +180,21 @@ function vybratRazmer(size) {
 
 // включение кнопок
 function obnovitDostup() {
-    knopkaGenerate.disabled = isBusy || !pythonGotov;
-    knopkaSvoi.disabled = isBusy;
-    knopkaSort.disabled = isBusy || !pythonGotov || massiv.length === 0;
-    knopkaCompare.disabled = isBusy || !pythonGotov || massiv.length === 0;
-    knopkaStop.disabled = !sortIdet;
-    razmerInput.disabled = isBusy;
-    algoritmSelect.disabled = isBusy;
-    speedSelect.disabled = isBusy;
-    svoiInput.disabled = isBusy;
+    knopkaGenerate.disabled = zanat || !pythonGotov;
+    knopkaSvoi.disabled = zanat;
+    knopkaSort.disabled = zanat || !pythonGotov || massiv.length === 0;
+    knopkaCompare.disabled = zanat || !pythonGotov || massiv.length === 0;
+    knopkaStop.disabled = !sortirovkaIdet;
+    razmerInput.disabled = zanat;
+    algoritmSelect.disabled = zanat;
+    svoiInput.disabled = zanat;
 
     for (let i = 0; i < knopkiAlgoritmov.length; i += 1) {
-        knopkiAlgoritmov[i].disabled = isBusy;
+        knopkiAlgoritmov[i].disabled = zanat;
     }
 }
 
-// рисуем столбцы
+// рисует столбцы
 function risovatMassiv(array, active = [], sorted = false) {
     if (array.length === 0) {
         poleMassiva.innerHTML = '<p class="placeholder">Сначала сгенерируйте массив или введите его вручную.</p>';
@@ -250,7 +223,7 @@ function risovatMassiv(array, active = [], sorted = false) {
     poleMassiva.innerHTML = html;
 }
 
-// применяем шаг
+// шаг применяется 
 function primenitShag(array, step) {
     if (step.type === "swap") {
         const a = step.indices[0];
@@ -279,52 +252,35 @@ function pauza(size) {
         delay = 30;
     }
 
-    return Math.max(1, Math.round(delay * koefSkorosti()));
+    return delay;
 }
 
 // пропуск лишних шагов
-function shagAnimacii(stepCount, size) {
-    if (size <= 20) {
+function shagAnimacii(stepCount) {
+    if (stepCount <= 300) {
         return 1;
     }
 
-    if (size <= 40) {
-        return 2;
-    }
-
-    return Math.max(2, Math.ceil(stepCount / 300));
+    return Math.ceil(stepCount / 300);
 }
 
-// обычная пауза
+// пауза
 function sleep(ms) {
     return new Promise(function (resolve) {
         window.setTimeout(resolve, ms);
     });
 }
 
-// повторы для сравнения
-function povtorySravnenia(size) {
-    if (size <= 20) {
-        return 23;
-    }
-
-    if (size <= 50) {
-        return 13;
-    }
-
-    return 7;
-}
-
-// анимация сортировки
+// анимация сорта
 async function animacia(startArray, steps) {
     const array = startArray.slice();
     const delay = pauza(array.length);
-    const skip = shagAnimacii(steps.length, array.length);
+    const skip = shagAnimacii(steps.length);
 
     risovatMassiv(array);
 
     for (let i = 0; i < steps.length; i += 1) {
-        if (stopNado) {
+        if (nadoOstanovit) {
             risovatMassiv(array);
             return false;
         }
@@ -352,7 +308,7 @@ function ochistitSravnenie() {
     compareBody.innerHTML = '<tr><td colspan="5">Пока нет данных.</td></tr>';
 }
 
-// значение для сортировки таблицы
+// значение для таблицы
 function znachenieSortirovki(item, field) {
     if (field === "name") {
         return nazvanieAlgoritma(item.algorithm);
@@ -390,7 +346,7 @@ function otsortirovatResults() {
     return result;
 }
 
-// стрелки таблицы
+// стрелка в таблице
 function obnovitSortTable() {
     for (let i = 0; i < knopkiSortTable.length; i += 1) {
         const button = knopkiSortTable[i];
@@ -418,7 +374,7 @@ function vybratSortTablicy(newSort) {
     }
 }
 
-// вывод таблицы
+// показ таблицы
 function pokazatSravnenie(results = null) {
     if (results !== null) {
         comparisonResults = results.slice();
@@ -429,8 +385,7 @@ function pokazatSravnenie(results = null) {
         return;
     }
 
-    compareText.textContent = "Все алгоритмы запускались на одном и том же массиве, поэтому результаты удобно сравнивать.";
-
+    compareText.textContent = "Все запускаемые алгоритмы запускались на одном и том же массиве, поэтому результаты удобно сравнивать.";
     const sortedResults = otsortirovatResults();
     let html = "";
 
@@ -484,7 +439,7 @@ function razobratSvoiMassiv(text) {
     return result;
 }
 
-// загрузка python
+// загрузка Python
 async function zagruzitPython() {
     pokazatStatus("Загружается Python прямо в браузере...");
     obnovitDostup();
@@ -510,13 +465,13 @@ async function zagruzitPython() {
         pythonGotov = true;
         pokazatStatus("Python загружен. Теперь можно генерировать и сортировать массив.", "success");
     } catch {
-        pokazatStatus("Python не загрузился. Для GitHub Pages нужен интернет, потому что Pyodide скачивается из CDN.", "error");
+        pokazatStatus("Python не загрузился. Требуется подключения к интернету для скачивания Pyodide.", "error");
     }
 
     obnovitDostup();
 }
 
-// вызов python функции
+// вызов Python
 function python(name, ...args) {
     const func = pyodide.globals.get(name);
 
@@ -542,32 +497,30 @@ function zagruzitMassiv(array) {
 
 // случайный массив
 function generirovatMassiv() {
-    if (isBusy || !pythonGotov) {
+    if (zanat || !pythonGotov) {
         return;
     }
 
-    const size = normalRazmer(razmerInput.value);
-    razmerInput.value = size;
-    isBusy = true;
-    stopNado = false;
+    zanat = true;
+    nadoOstanovit = false;
     obnovitDostup();
     pokazatStatus("Python генерирует массив...");
 
     try {
-        const data = python("generate_array_json", size);
+        const data = python("generate_array_json", razmerInput.value);
         zagruzitMassiv(data.array);
         pokazatStatus("Массив сгенерирован.", "success");
     } catch {
         pokazatStatus("Ошибка при генерации массива.", "error");
     }
 
-    isBusy = false;
+    zanat = false;
     obnovitDostup();
 }
 
 // свой массив
 function ispolzovatSvoiMassiv() {
-    if (isBusy) {
+    if (zanat) {
         return;
     }
 
@@ -582,7 +535,7 @@ function ispolzovatSvoiMassiv() {
 
 // запуск сортировки
 async function sortirovatMassiv() {
-    if (isBusy || !pythonGotov) {
+    if (zanat || !pythonGotov) {
         return;
     }
 
@@ -591,18 +544,18 @@ async function sortirovatMassiv() {
         return;
     }
 
-    isBusy = true;
-    sortIdet = true;
-    stopNado = false;
+    zanat = true;
+    sortirovkaIdet = true;
+    nadoOstanovit = false;
     obnovitDostup();
     pokazatStatus("Python сортирует массив...");
 
     try {
         const startMs = performance.now();
         const data = python("sort_array_json", algoritmSelect.value, JSON.stringify(massiv));
-        const gotov = await animacia(data.original_array, data.steps);
+        const animaciaGotova = await animacia(data.original_array, data.steps);
 
-        if (!gotov) {
+        if (!animaciaGotova) {
             pokazatTextMassivov(massiv, null);
             pokazatStatus("Сортировка остановлена.", "warning");
         } else {
@@ -616,14 +569,14 @@ async function sortirovatMassiv() {
         pokazatStatus("Ошибка при сортировке массива.", "error");
     }
 
-    sortIdet = false;
-    isBusy = false;
+    sortirovkaIdet = false;
+    zanat = false;
     obnovitDostup();
 }
 
 // сравнение сортировок
 function sravnitAlgoritmy() {
-    if (isBusy || !pythonGotov) {
+    if (zanat || !pythonGotov) {
         return;
     }
 
@@ -632,28 +585,23 @@ function sravnitAlgoritmy() {
         return;
     }
 
-    isBusy = true;
-    stopNado = false;
+    zanat = true;
+    nadoOstanovit = false;
     obnovitDostup();
     pokazatStatus("Python сравнивает алгоритмы без анимации...");
 
     try {
         const results = [];
         const arrayJson = JSON.stringify(massiv);
-        const repeats = povtorySravnenia(massiv.length);
         let selectedStats = null;
         let sortedArray = [];
 
         for (let i = 0; i < knopkiAlgoritmov.length; i += 1) {
             const name = knopkiAlgoritmov[i].dataset.algorithm;
             const startMs = performance.now();
-            let answer = null;
+            const answer = python("sort_array_json", name, arrayJson);
 
-            for (let repeat = 0; repeat < repeats; repeat += 1) {
-                answer = python("sort_array_json", name, arrayJson);
-            }
-
-            answer.stats.time_ms = (performance.now() - startMs) / repeats;
+            answer.stats.time_ms = performance.now() - startMs;
             results.push(answer);
 
             if (i === 0) {
@@ -674,17 +622,17 @@ function sravnitAlgoritmy() {
         pokazatStatus("Ошибка при сравнении алгоритмов.", "error");
     }
 
-    isBusy = false;
+    zanat = false;
     obnovitDostup();
 }
 
 // остановка сортировки
-function stopAction() {
-    if (!sortIdet) {
+function ostanovitSortirovku() {
+    if (!sortirovkaIdet) {
         return;
     }
 
-    stopNado = true;
+    nadoOstanovit = true;
 
     pokazatTextMassivov(massiv, null);
     pokazatStatus("Выполнение остановлено.", "warning");

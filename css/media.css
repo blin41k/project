@@ -1,206 +1,16 @@
-/* мобильная версия */
-@media screen and (min-width: 320px) and (max-width: 354px) {
-    body {
-        padding: 8px;
-    }
-
-    .block,
-    .hero {
-        padding: 12px;
-        border-radius: 12px;
-    }
-
-    h1 {
-        font-size: 25px;
-    }
-
-    h2 {
-        font-size: 21px;
-    }
-
-    .hero {
-        min-height: auto;
-    }
-
-    .hero-text {
-        font-size: 14px;
-    }
-
-    .hero-tags {
-        gap: 7px;
-    }
-
-    .hero-tags span {
-        padding: 6px 10px;
-        font-size: 13px;
-    }
-
+/* планшет и маленький экран */
+@media (max-width: 980px) {
     .algorithm-list,
-    .work-panel,
-    .columns,
     .theory-grid,
-    .guide-layout,
-    .guide-details {
-        grid-template-columns: 1fr;
-    }
-
-    .algorithm-card {
-        min-height: 92px;
-        padding: 12px;
-    }
-
-    .buttons,
-    .size-presets {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .array-stage {
-        min-height: 220px;
-        padding: 10px;
-        gap: 2px;
-    }
-
-    .table-sort,
-    td {
-        padding: 9px;
-        font-size: 13px;
-    }
-}
-
-/* маленький телефон */
-@media screen and (min-width: 355px) and (max-width: 460px) {
-    body {
-        padding: 10px;
-    }
-
-    .block,
-    .hero {
-        padding: 14px;
-        border-radius: 13px;
-    }
-
-    h1 {
-        font-size: 29px;
-    }
-
-    h2 {
-        font-size: 22px;
-    }
-
-    .hero {
-        min-height: auto;
-    }
-
-    .hero-text {
-        font-size: 15px;
-    }
-
-    .hero-tags span {
-        padding: 7px 11px;
-        font-size: 14px;
-    }
-
-    .algorithm-list,
-    .work-panel,
-    .columns,
-    .theory-grid,
-    .guide-layout,
-    .guide-details {
-        grid-template-columns: 1fr;
-    }
-
-    .buttons,
-    .size-presets {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .array-stage {
-        min-height: 245px;
-        padding: 11px;
-        gap: 3px;
-    }
-
-    .table-sort,
-    td {
-        font-size: 14px;
-    }
-}
-
-/* планшет */
-@media screen and (width: 768px) {
-    .container {
-        max-width: 720px;
-    }
-
-    h1 {
-        font-size: 38px;
-    }
-
-    .algorithm-list {
+    .guide-details,
+    .fruit-list,
+    .fruit-sort-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .work-panel,
     .columns,
-    .guide-layout,
-    .guide-details {
-        grid-template-columns: 1fr;
-    }
-
-    .theory-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .array-stage {
-        min-height: 330px;
-    }
-}
-
-/* небольшой ноутбук */
-@media screen and (width: 1024px) {
-    .container {
-        max-width: 960px;
-    }
-
-    h1 {
-        font-size: 42px;
-    }
-
-    .algorithm-list {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .work-panel {
-        grid-template-columns: minmax(260px, 0.78fr) minmax(0, 1.4fr);
-    }
-
-    .array-stage {
-        min-height: 350px;
-    }
-}
-
-/* широкий экран */
-@media screen and (width: 1440px) {
-    .container {
-        max-width: 1280px;
-    }
-
-    h1 {
-        font-size: 46px;
-    }
-
-    .array-stage {
-        min-height: 420px;
-    }
-}
-
-/* узкий экран */
-@media (max-width: 980px) {
-    .work-panel,
-    .columns,
-    .theory-grid,
-    .guide-layout,
-    .guide-details {
+    .guide-layout {
         grid-template-columns: 1fr;
     }
 
@@ -221,29 +31,40 @@
         border-radius: 14px;
     }
 
-    .hero {
-        min-height: auto;
-    }
-
     h1 {
         font-size: 31px;
+    }
+
+    .hero {
+        min-height: auto;
     }
 
     .hero-text {
         font-size: 16px;
     }
 
-    .algorithm-list {
+    .algorithm-list,
+    .theory-grid,
+    .guide-details,
+    .fruit-list,
+    .fruit-sort-grid,
+    .buttons {
         grid-template-columns: 1fr;
     }
 
-    .buttons {
-        grid-template-columns: 1fr;
+    .wide-joke-card {
+        grid-column: span 1;
     }
 
     .array-stage {
         min-height: 235px;
         padding: 10px;
         gap: 3px;
+    }
+
+    th,
+    td {
+        padding: 9px;
+        font-size: 13px;
     }
 }
